@@ -3,92 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJI Unofficial Feed</title>
+    <title>DJI Unofficial Members</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="flex flex-col min-h-screen selection:bg-[#E61F2B] selection:text-white">
+<body class="flex flex-col min-h-screen selection:bg-[#E61F2B] selection:text-white bg-[#050505]">
 
-    <!-- Professional Navbar -->
-    <nav class="w-full border-b border-zinc-900 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+    <nav class="w-full border-b border-zinc-900 bg-black/90 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
+            
+            <div class="flex items-center gap-3">
+                <button id="menu-btn" class="text-zinc-400 hover:text-white transition-colors focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <div class="w-2 h-2 bg-[#E61F2B] rounded-full animate-pulse shadow-[0_0_8px_#E61F2B]"></div>
-                <h1 class="font-bold tracking-widest text-white text-md">
-                    TERMINAL <span class="text-zinc-600">|</span> <span id="user-status" class="text-xs text-cyan-400">Offline</span>
+                <h1 class="font-bold tracking-widest text-white text-sm md:text-md uppercase">
+                    DJI UNOFFICIAL MEMBERS
                 </h1>
             </div>
-            <a href="login.html" id="auth-btn" class="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors">
-                Login
-            </a>
+
+            <div class="flex items-center gap-4">
+                <span id="user-status" class="text-xs text-cyan-400 hidden md:block">Offline</span>
+                <a href="login.html" id="auth-btn" class="text-xs font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-white px-3 py-1.5 rounded hover:bg-zinc-800 transition-colors">
+                    Login
+                </a>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow w-full max-w-3xl mx-auto px-4 py-8">
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-black border-r border-zinc-900 transform -translate-x-full transition-transform duration-300 ease-in-out z-40 pt-20 px-6">
+        <h2 class="text-[#E61F2B] font-black tracking-widest mb-6 text-sm">SYSTEM MENU</h2>
+        <ul class="space-y-4 text-sm font-bold text-zinc-400">
+            <li><a href="#" class="hover:text-white transition-colors block py-2 border-b border-zinc-900">Forum Feed</a></li>
+            <li><a href="#" class="hover:text-white transition-colors block py-2 border-b border-zinc-900">WhatsApp Group</a></li>
+            
+            <li class="pt-8">
+                <h3 class="text-white text-xs uppercase tracking-widest mb-3">About Developer</h3>
+                <div class="bg-zinc-950 border border-zinc-800 p-3 rounded-lg">
+                    <p class="text-[11px] text-zinc-500 leading-relaxed">
+                        Engineered by <span class="text-white"> XNEON Technologies
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    
+    <div id="menu-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden transition-opacity"></div>
+
+    <main class="flex-grow w-full max-w-3xl mx-auto px-4 py-8 relative z-10">
         
-        <!-- Post Creation Box (Hidden until logged in) -->
         <div id="create-post-box" class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl mb-8 glow-red hidden">
             <textarea id="post-content" placeholder="Share hardware fixes, firmware logs, or intel..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-[#E61F2B] outline-none text-white mb-3 h-24 resize-none"></textarea>
+            
+            <div class="mb-3 flex items-center gap-2 bg-black border border-zinc-800 p-2 rounded-lg">
+                <label for="post-image" class="cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs px-3 py-1.5 rounded transition-colors border border-zinc-700 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Attach Image
+                </label>
+                <input type="file" id="post-image" accept="image/*" class="hidden">
+                <span id="file-name" class="text-xs text-zinc-500 truncate max-w-[200px]">No file selected</span>
+            </div>
+
             <div class="flex flex-col sm:flex-row gap-2">
                 <input type="text" id="post-tag" placeholder="#Tag (e.g. #firmware)" class="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm w-full sm:w-1/3 outline-none text-cyan-400 focus:border-cyan-500">
                 <button id="submit-post" class="bg-[#E61F2B] hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg text-sm w-full sm:w-2/3 uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(230,31,43,0.3)]">Deploy Post</button>
             </div>
         </div>
 
-        <!-- The Feed -->
         <div id="feed-container" class="space-y-4">
             <div class="text-center text-zinc-600 text-sm py-10">Establishing connection to database...</div>
         </div>
     </main>
 
-    <!-- Professional Developer Footer -->
-    <footer class="mt-auto py-8 border-t border-zinc-900 text-center bg-black">
-        <p class="text-[10px] text-zinc-600 font-mono tracking-widest leading-relaxed">
-            SYSTEM ENGINEERED BY SKVZ SOFTWARES<br>
-            <span class="text-zinc-800">SHIVANSH R.T • KUNJ PATIL • VENU • ZYLERN</span>
-        </p>
-    </footer>
-
-    <!-- Feed Logic Engine -->
     <script type="module">
-        import { db, auth } from './js/firebase.js';
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { db, auth, storage } from './js/firebase.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
+        // Sidebar Menu Logic
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('menu-overlay');
+        const menuBtn = document.getElementById('menu-btn');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Image Selection Display
+        let selectedFile = null;
+        document.getElementById('post-image').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                document.getElementById('file-name').innerText = selectedFile.name;
+            } else {
+                selectedFile = null;
+                document.getElementById('file-name').innerText = "No file selected";
+            }
+        });
+
+        // Authentication State
         let currentUser = null;
-
-        // Verify Login
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('user-status').innerText = user.email.split('@')[0];
-                document.getElementById('auth-btn').innerText = "Dashboard";
-                document.getElementById('auth-btn').href = "admin.html";
+                
+                // Change Login button to Logout
+                const authBtn = document.getElementById('auth-btn');
+                authBtn.innerText = "Logout";
+                authBtn.classList.replace('bg-zinc-900', 'bg-red-900/50');
+                authBtn.classList.replace('border-zinc-800', 'border-red-900');
+                authBtn.classList.replace('hover:bg-zinc-800', 'hover:bg-red-900');
+                authBtn.href = "#";
+                authBtn.addEventListener('click', () => { signOut(auth); window.location.reload(); });
+                
                 document.getElementById('create-post-box').classList.remove('hidden');
             }
         });
 
-        // Submit Post
+        // Submit Post with Image Upload capability
         document.getElementById('submit-post').addEventListener('click', async () => {
             const content = document.getElementById('post-content').value;
-            const tag = document.getElementById('post-tag').value || '#general';
-            if (content.trim() === "") return;
+            let tag = document.getElementById('post-tag').value || '#general';
+            const submitBtn = document.getElementById('submit-post');
 
-            document.getElementById('submit-post').innerText = "Deploying...";
-            await addDoc(collection(db, "posts"), {
-                text: content,
-                tag: tag.startsWith('#') ? tag : `#${tag}`,
-                author: currentUser.email.split('@')[0],
-                createdAt: serverTimestamp()
-            });
+            if (content.trim() === "" && !selectedFile) return alert("Please add text or an image.");
 
-            document.getElementById('post-content').value = "";
-            document.getElementById('post-tag').value = "";
-            document.getElementById('submit-post').innerText = "Deploy Post";
+            submitBtn.innerText = "Uploading...";
+            submitBtn.disabled = true;
+
+            let imageUrl = null;
+
+            try {
+                // If there is an image, upload it to Storage first
+                if (selectedFile) {
+                    const storageRef = ref(storage, `post_images/${Date.now()}_${selectedFile.name}`);
+                    await uploadBytes(storageRef, selectedFile);
+                    imageUrl = await getDownloadURL(storageRef);
+                }
+
+                // Save post to Database
+                await addDoc(collection(db, "posts"), {
+                    text: content,
+                    imageUrl: imageUrl, // Will be null if no image was selected
+                    tag: tag.startsWith('#') ? tag : `#${tag}`,
+                    author: currentUser.email.split('@')[0],
+                    createdAt: serverTimestamp()
+                });
+
+                // Reset form
+                document.getElementById('post-content').value = "";
+                document.getElementById('post-tag').value = "";
+                document.getElementById('post-image').value = "";
+                document.getElementById('file-name').innerText = "No file selected";
+                selectedFile = null;
+
+            } catch (error) {
+                console.error("Error posting: ", error);
+                alert("Failed to upload. Check console.");
+            } finally {
+                submitBtn.innerText = "Deploy Post";
+                submitBtn.disabled = false;
+            }
         });
 
-        // Real-time Feed Listener
+        // Real-time Feed Listener (Upgraded to display images)
         const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
         onSnapshot(q, (snapshot) => {
             const feed = document.getElementById('feed-container');
@@ -96,15 +182,20 @@
             
             snapshot.forEach((docSnap) => {
                 const post = docSnap.data();
-                const postId = docSnap.id;
                 
+                // Only build the image HTML if the post actually has an image
+                const imageHtml = post.imageUrl 
+                    ? `<img src="${post.imageUrl}" alt="Pilot Upload" class="w-full h-auto mt-3 rounded-lg border border-zinc-800 object-cover max-h-96">` 
+                    : '';
+
                 feed.innerHTML += `
                     <div class="bg-zinc-950 border border-zinc-800 p-5 rounded-xl transition-all hover:border-zinc-700">
                         <div class="flex justify-between items-start mb-3">
                             <span class="text-xs font-bold text-zinc-400">@${post.author}</span>
                             <span class="text-[10px] font-black text-cyan-400 bg-cyan-900/20 border border-cyan-900/50 px-2 py-1 rounded tracking-wider uppercase">${post.tag}</span>
                         </div>
-                        <p class="text-sm text-zinc-200 mb-4 leading-relaxed">${post.text}</p>
+                        <p class="text-sm text-zinc-200 leading-relaxed">${post.text}</p>
+                        ${imageHtml}
                     </div>
                 `;
             });
