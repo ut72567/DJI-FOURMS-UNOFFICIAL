@@ -9,23 +9,25 @@
 </head>
 <body class="flex flex-col min-h-screen selection:bg-[#E61F2B] selection:text-white bg-[#050505]">
 
-    <nav class="w-full border-b border-zinc-900 bg-black/90 backdrop-blur-md sticky top-0 z-50">
+    <!-- Navbar -->
+    <nav class="w-full border-b border-zinc-900 bg-black/90 backdrop-blur-md sticky top-0 z-40">
         <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
             
             <div class="flex items-center gap-3">
-                <button id="menu-btn" class="text-zinc-400 hover:text-white transition-colors focus:outline-none">
+                <!-- Hamburger Icon -->
+                <button id="menu-btn" class="text-zinc-400 hover:text-white transition-colors focus:outline-none z-50">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                <div class="w-2 h-2 bg-[#E61F2B] rounded-full animate-pulse shadow-[0_0_8px_#E61F2B]"></div>
+                <div class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_8px_#06b6d4]"></div>
                 <h1 class="font-bold tracking-widest text-white text-sm md:text-md uppercase">
                     DJI UNOFFICIAL MEMBERS
                 </h1>
             </div>
 
             <div class="flex items-center gap-4">
-                <span id="user-status" class="text-xs text-cyan-400 hidden md:block">Offline</span>
+                <span class="text-xs text-zinc-500 hidden md:block">System Online</span>
                 <a href="login.html" id="auth-btn" class="text-xs font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-white px-3 py-1.5 rounded hover:bg-zinc-800 transition-colors">
                     Login
                 </a>
@@ -33,7 +35,8 @@
         </div>
     </nav>
 
-    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-black border-r border-zinc-900 transform -translate-x-full transition-transform duration-300 ease-in-out z-40 pt-20 px-6">
+    <!-- Sidebar Menu -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-black border-r border-zinc-900 transform -translate-x-full transition-transform duration-300 ease-in-out z-50 pt-20 px-6 shadow-2xl">
         <h2 class="text-[#E61F2B] font-black tracking-widest mb-6 text-sm">SYSTEM MENU</h2>
         <ul class="space-y-4 text-sm font-bold text-zinc-400">
             <li><a href="#" class="hover:text-white transition-colors block py-2 border-b border-zinc-900">Forum Feed</a></li>
@@ -43,19 +46,34 @@
                 <h3 class="text-white text-xs uppercase tracking-widest mb-3">About Developer</h3>
                 <div class="bg-zinc-950 border border-zinc-800 p-3 rounded-lg">
                     <p class="text-[11px] text-zinc-500 leading-relaxed">
-                        Engineered by <span class="text-white"> XNEON Technologies
+                        Engineered by <span class="text-white">XNEON Technologies</span>
                     </p>
                 </div>
             </li>
         </ul>
     </div>
-    
-    <div id="menu-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden transition-opacity"></div>
+    <div id="menu-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity"></div>
 
+    <!-- Login/Signup Popup Modal (Hidden by default) -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-zinc-800 p-6 rounded-xl text-center max-w-sm w-full shadow-[0_0_30px_rgba(230,31,43,0.15)]">
+            <div class="w-3 h-3 bg-[#E61F2B] rounded-full mx-auto mb-4 animate-pulse"></div>
+            <h3 class="text-white font-black tracking-widest text-lg mb-2">ACCESS RESTRICTED</h3>
+            <p class="text-zinc-400 text-sm mb-6">You must initialize a pilot profile to deploy posts and share intel.</p>
+            <div class="flex gap-3">
+                <a href="login.html" class="flex-1 bg-zinc-900 border border-zinc-800 hover:border-cyan-500 hover:text-cyan-400 text-white font-bold py-3 rounded-lg transition-all text-xs uppercase tracking-widest">Login</a>
+                <a href="register.html" class="flex-1 bg-[#E61F2B] hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(230,31,43,0.3)]">Register</a>
+            </div>
+            <button id="close-modal-btn" class="mt-6 text-xs text-zinc-600 hover:text-white uppercase tracking-wider font-bold">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
     <main class="flex-grow w-full max-w-3xl mx-auto px-4 py-8 relative z-10">
         
-        <div id="create-post-box" class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl mb-8 glow-red hidden">
-            <textarea id="post-content" placeholder="Share hardware fixes, firmware logs, or intel..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-[#E61F2B] outline-none text-white mb-3 h-24 resize-none"></textarea>
+        <!-- Post Creation Box (Always visible now) -->
+        <div class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl mb-8 transition-colors hover:border-zinc-700">
+            <textarea id="post-content" placeholder="Share hardware fixes, firmware logs, or intel..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-cyan-500 outline-none text-white mb-3 h-20 resize-none transition-colors"></textarea>
             
             <div class="mb-3 flex items-center gap-2 bg-black border border-zinc-800 p-2 rounded-lg">
                 <label for="post-image" class="cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs px-3 py-1.5 rounded transition-colors border border-zinc-700 flex items-center gap-2">
@@ -67,34 +85,43 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="post-tag" placeholder="#Tag (e.g. #firmware)" class="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm w-full sm:w-1/3 outline-none text-cyan-400 focus:border-cyan-500">
+                <input type="text" id="post-tag" placeholder="#Tag (e.g. #hardware)" class="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm w-full sm:w-1/3 outline-none text-cyan-400 focus:border-cyan-500">
                 <button id="submit-post" class="bg-[#E61F2B] hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg text-sm w-full sm:w-2/3 uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(230,31,43,0.3)]">Deploy Post</button>
             </div>
         </div>
 
+        <!-- The Feed -->
         <div id="feed-container" class="space-y-4">
-            <div class="text-center text-zinc-600 text-sm py-10">Establishing connection to database...</div>
+            <!-- Posts inject here instantly -->
         </div>
     </main>
 
+    <!-- Logic Engine -->
     <script type="module">
         import { db, auth, storage } from './js/firebase.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-        // Sidebar Menu Logic
+        // Bulletproof Sidebar Menu Logic
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('menu-overlay');
-        const menuBtn = document.getElementById('menu-btn');
+        
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        });
+        
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
 
-        function toggleMenu() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
-        menuBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
+        // Modal Logic for Unregistered Users
+        const authModal = document.getElementById('auth-modal');
+        document.getElementById('close-modal-btn').addEventListener('click', () => {
+            authModal.classList.add('hidden');
+        });
 
         // Image Selection Display
         let selectedFile = null;
@@ -108,14 +135,11 @@
             }
         });
 
-        // Authentication State
+        // Check Auth Status (Updates UI only)
         let currentUser = null;
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('user-status').innerText = user.email.split('@')[0];
-                
-                // Change Login button to Logout
                 const authBtn = document.getElementById('auth-btn');
                 authBtn.innerText = "Logout";
                 authBtn.classList.replace('bg-zinc-900', 'bg-red-900/50');
@@ -123,13 +147,16 @@
                 authBtn.classList.replace('hover:bg-zinc-800', 'hover:bg-red-900');
                 authBtn.href = "#";
                 authBtn.addEventListener('click', () => { signOut(auth); window.location.reload(); });
-                
-                document.getElementById('create-post-box').classList.remove('hidden');
             }
         });
 
-        // Submit Post with Image Upload capability
+        // Submit Post Button (Triggers Popup if not logged in)
         document.getElementById('submit-post').addEventListener('click', async () => {
+            if (!currentUser) {
+                authModal.classList.remove('hidden'); // Show popup if guest
+                return;
+            }
+
             const content = document.getElementById('post-content').value;
             let tag = document.getElementById('post-tag').value || '#general';
             const submitBtn = document.getElementById('submit-post');
@@ -142,23 +169,20 @@
             let imageUrl = null;
 
             try {
-                // If there is an image, upload it to Storage first
                 if (selectedFile) {
                     const storageRef = ref(storage, `post_images/${Date.now()}_${selectedFile.name}`);
                     await uploadBytes(storageRef, selectedFile);
                     imageUrl = await getDownloadURL(storageRef);
                 }
 
-                // Save post to Database
                 await addDoc(collection(db, "posts"), {
                     text: content,
-                    imageUrl: imageUrl, // Will be null if no image was selected
+                    imageUrl: imageUrl, 
                     tag: tag.startsWith('#') ? tag : `#${tag}`,
                     author: currentUser.email.split('@')[0],
                     createdAt: serverTimestamp()
                 });
 
-                // Reset form
                 document.getElementById('post-content').value = "";
                 document.getElementById('post-tag').value = "";
                 document.getElementById('post-image').value = "";
@@ -174,7 +198,7 @@
             }
         });
 
-        // Real-time Feed Listener (Upgraded to display images)
+        // Load Feed IMMEDIATELY for everyone (No login required)
         const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
         onSnapshot(q, (snapshot) => {
             const feed = document.getElementById('feed-container');
@@ -183,7 +207,6 @@
             snapshot.forEach((docSnap) => {
                 const post = docSnap.data();
                 
-                // Only build the image HTML if the post actually has an image
                 const imageHtml = post.imageUrl 
                     ? `<img src="${post.imageUrl}" alt="Pilot Upload" class="w-full h-auto mt-3 rounded-lg border border-zinc-800 object-cover max-h-96">` 
                     : '';
