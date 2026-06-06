@@ -6,6 +6,14 @@
     <title>Profile Settings | DJI Nexus Community</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("dR7szNsRur2vopJXq"); // Your Public Key
+        })();
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -40,14 +48,14 @@
     </header>
 
     <main class="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6">
-        
+
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold text-white">Account Settings</h1>
             <button id="logout-btn" class="px-4 py-2 text-sm font-medium text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-lg transition-colors border border-red-500/20">Sign Out</button>
         </div>
 
         <div class="bg-uiCard border border-uiBorder rounded-xl p-6 shadow-sm space-y-8">
-            
+
             <div class="flex items-center gap-5 pb-6 border-b border-uiBorder">
                 <div id="avatar-circle" class="w-16 h-16 rounded-full bg-uiBorder flex items-center justify-center text-xl font-bold text-white shadow-inner">
                     ?
@@ -66,7 +74,7 @@
                         <i data-lucide="lock" class="w-3 h-3"></i> Email changes require administrator verification.
                     </p>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-uiMuted mb-1.5">Community Display Name</label>
                     <input type="text" id="user-name" required placeholder="Enter your pilot alias..." class="w-full bg-uiBg border border-uiBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-uiAccent focus:ring-1 focus:ring-uiAccent transition-all">
@@ -80,8 +88,45 @@
                     </button>
                 </div>
             </form>
-        </div>
-        
+
+            <div class="pt-6 border-t border-uiBorder">
+                <h3 class="text-sm font-medium text-uiMuted mb-4">Security</h3>
+                
+                <div id="pw-init-state">
+                    <button type="button" id="start-pw-btn" class="px-4 py-2 rounded-lg bg-uiBg border border-uiBorder hover:border-uiAccent text-white font-medium text-sm transition-colors flex items-center gap-2">
+                        <i data-lucide="key" class="w-4 h-4"></i> Change Password
+                    </button>
+                    <p id="pw-error-msg" class="text-sm text-red-400 mt-2 hidden"></p>
+                </div>
+
+                <div id="pw-otp-state" class="hidden space-y-4">
+                    <div class="p-3 bg-uiAccent/10 border border-uiAccent/20 rounded-lg">
+                        <p class="text-sm text-uiAccent">An OTP has been sent to your registered email.</p>
+                    </div>
+                    <div>
+                        <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" class="w-full bg-uiBg border border-uiBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-uiAccent focus:ring-1 focus:ring-uiAccent transition-all">
+                    </div>
+                    <button type="button" id="verify-otp-btn" class="px-6 py-2 rounded-lg bg-uiAccent hover:bg-uiHover text-white font-medium text-sm transition-colors flex items-center gap-2">
+                        Verify Code
+                    </button>
+                </div>
+
+                <div id="pw-new-state" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-uiMuted mb-1.5">New Password</label>
+                        <input type="password" id="new-pw-input" placeholder="Enter new password" class="w-full bg-uiBg border border-uiBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-uiAccent focus:ring-1 focus:ring-uiAccent transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-uiMuted mb-1.5">Confirm New Password</label>
+                        <input type="password" id="confirm-pw-input" placeholder="Confirm new password" class="w-full bg-uiBg border border-uiBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-uiAccent focus:ring-1 focus:ring-uiAccent transition-all">
+                    </div>
+                    <button type="button" id="save-pw-btn" class="px-6 py-2.5 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium text-sm transition-colors shadow-sm flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i> Update Password
+                    </button>
+                </div>
+            </div>
+            </div>
+
         <div class="text-center text-xs text-uiMuted font-medium pt-4">
             System ID: <span id="system-uid" class="font-mono bg-uiBorder/40 px-1.5 py-0.5 rounded text-uiText">----------</span>
         </div>
@@ -90,7 +135,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        // ADDED: Imported updatePassword to your existing imports
+        import { getAuth, onAuthStateChanged, updateProfile, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB7-pk30LeE0TICao-rfn-LBvaWXpEr3eA",
@@ -103,7 +149,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        
+
         lucide.createIcons();
 
         // Check authentication state
@@ -111,11 +157,11 @@
             if (user) {
                 // Populate Profile Data
                 const displayName = user.displayName || 'Unnamed Pilot';
-                
+
                 document.getElementById('display-name-text').textContent = displayName;
                 document.getElementById('display-email-text').textContent = user.email;
                 document.getElementById('avatar-circle').textContent = displayName.charAt(0).toUpperCase();
-                
+
                 document.getElementById('user-email').value = user.email;
                 document.getElementById('user-name').value = user.displayName || '';
                 document.getElementById('system-uid').textContent = user.uid;
@@ -145,15 +191,15 @@
                 await updateProfile(auth.currentUser, {
                     displayName: newName
                 });
-                
+
                 // Update UI visually
                 document.getElementById('display-name-text').textContent = newName;
                 document.getElementById('avatar-circle').textContent = newName.charAt(0).toUpperCase();
-                
+
                 // Show Success Message
                 statusBox.textContent = '✓ Profile updated successfully.';
                 statusBox.className = 'text-sm font-medium text-green-400 block pt-1';
-                
+
             } catch (error) {
                 // Show Error Message
                 statusBox.textContent = `Error: ${error.message}`;
@@ -174,6 +220,109 @@
                 // The onAuthStateChanged listener will automatically redirect to login.html
             } catch (error) {
                 alert("Failed to sign out: " + error.message);
+            }
+        });
+
+
+        // ==========================================
+        // ADDED: Password Change Logic
+        // ==========================================
+        let generatedOTP = null;
+
+        const startPwBtn = document.getElementById('start-pw-btn');
+        const pwErrorMsg = document.getElementById('pw-error-msg');
+        
+        const pwInitState = document.getElementById('pw-init-state');
+        const pwOtpState = document.getElementById('pw-otp-state');
+        const pwNewState = document.getElementById('pw-new-state');
+
+        const verifyOtpBtn = document.getElementById('verify-otp-btn');
+        const otpInput = document.getElementById('otp-input');
+
+        const savePwBtn = document.getElementById('save-pw-btn');
+        const newPwInput = document.getElementById('new-pw-input');
+        const confirmPwInput = document.getElementById('confirm-pw-input');
+
+        // Step 1: Request OTP
+        startPwBtn.addEventListener('click', () => {
+            if (!auth.currentUser) return;
+            const userEmail = auth.currentUser.email;
+
+            // Generate a 6-digit random OTP
+            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+            startPwBtn.disabled = true;
+            startPwBtn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Sending...`;
+
+            // Note: Make sure your EmailJS template expects variables named 'email' and 'otp'
+            emailjs.send("service_l5yz804", "template_2zn11sn", {
+                email: userEmail,
+                otp: generatedOTP
+            }).then(() => {
+                pwInitState.classList.add('hidden');
+                pwOtpState.classList.remove('hidden');
+                pwErrorMsg.classList.add('hidden');
+            }).catch((error) => {
+                pwErrorMsg.textContent = "Failed to send email. " + error.text;
+                pwErrorMsg.classList.remove('hidden');
+                startPwBtn.disabled = false;
+                startPwBtn.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i> Change Password`;
+                lucide.createIcons();
+            });
+        });
+
+        // Step 2: Verify OTP
+        verifyOtpBtn.addEventListener('click', () => {
+            if (otpInput.value === generatedOTP) {
+                pwOtpState.classList.add('hidden');
+                pwNewState.classList.remove('hidden');
+            } else {
+                alert("Incorrect OTP. Please try again.");
+            }
+        });
+
+        // Step 3: Set New Password
+        savePwBtn.addEventListener('click', async () => {
+            const newPw = newPwInput.value;
+            const confirmPw = confirmPwInput.value;
+
+            if (newPw !== confirmPw) {
+                alert("Passwords do not match!");
+                return;
+            }
+            if (newPw.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+
+            savePwBtn.disabled = true;
+            savePwBtn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Updating...`;
+
+            try {
+                await updatePassword(auth.currentUser, newPw);
+                alert("Your password has been successfully updated!");
+                
+                // Reset everything to default state
+                pwNewState.classList.add('hidden');
+                pwInitState.classList.remove('hidden');
+                startPwBtn.disabled = false;
+                startPwBtn.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i> Change Password`;
+                
+                newPwInput.value = '';
+                confirmPwInput.value = '';
+                otpInput.value = '';
+                lucide.createIcons();
+
+            } catch (error) {
+                // Firebase Security Requirement: Changing passwords usually requires a recent login
+                if (error.code === 'auth/requires-recent-login') {
+                    alert("For security reasons, please log out and log back in before changing your password.");
+                } else {
+                    alert("Error: " + error.message);
+                }
+                savePwBtn.disabled = false;
+                savePwBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Update Password`;
+                lucide.createIcons();
             }
         });
     </script>
