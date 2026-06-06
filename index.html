@@ -3,227 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJI Unofficial Members</title>
+    <title>DJI Nexus Community | Main Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyberDark: '#0b0f19',
+                        cyberCard: '#151d30',
+                        cyberBorder: '#222f4c',
+                        neonCyan: '#00f0ff',
+                        neonPurple: '#bf5af2'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0b0f19; color: #e2e8f0; }
+        .cyber-glow:hover { box-shadow: 0 0 15px rgba(0, 240, 255, 0.25); border-color: #00f0ff; }
+    </style>
+    <link rel="stylesheet" href="global.css">
 </head>
-<body class="flex flex-col min-h-screen selection:bg-[#E61F2B] selection:text-white bg-[#050505]">
+<body class="min-h-screen flex flex-col antialiased relative overflow-x-hidden">
 
-    <!-- Navbar -->
-    <nav class="w-full border-b border-zinc-900 bg-black/90 backdrop-blur-md sticky top-0 z-40">
-        <div class="max-w-3xl mx-auto px-4 py-4 flex justify-between items-center">
-            
-            <div class="flex items-center gap-3">
-                <!-- Hamburger Icon -->
-                <button id="menu-btn" class="text-zinc-400 hover:text-white transition-colors focus:outline-none z-50">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                <div class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_8px_#06b6d4]"></div>
-                <h1 class="font-bold tracking-widest text-white text-sm md:text-md uppercase">
-                    DJI UNOFFICIAL MEMBERS
-                </h1>
-            </div>
-
+    <header class="sticky top-0 z-40 w-full border-b border-cyberBorder bg-cyberDark/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <span class="text-xs text-zinc-500 hidden md:block">System Online</span>
-                <a href="login.html" id="auth-btn" class="text-xs font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 text-white px-3 py-1.5 rounded hover:bg-zinc-800 transition-colors">
-                    Login
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Sidebar Menu -->
-    <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-black border-r border-zinc-900 transform -translate-x-full transition-transform duration-300 ease-in-out z-50 pt-20 px-6 shadow-2xl">
-        <h2 class="text-[#E61F2B] font-black tracking-widest mb-6 text-sm">SYSTEM MENU</h2>
-        <ul class="space-y-4 text-sm font-bold text-zinc-400">
-            <li><a href="#" class="hover:text-white transition-colors block py-2 border-b border-zinc-900">Forum Feed</a></li>
-            <li><a href="#" class="hover:text-white transition-colors block py-2 border-b border-zinc-900">WhatsApp Group</a></li>
-            
-            <li class="pt-8">
-                <h3 class="text-white text-xs uppercase tracking-widest mb-3">About Developer</h3>
-                <div class="bg-zinc-950 border border-zinc-800 p-3 rounded-lg">
-                    <p class="text-[11px] text-zinc-500 leading-relaxed">
-                        Engineered by <span class="text-white">XNEON Technologies</span>
-                    </p>
+                <button onclick="toggleDrawer(true)" class="p-2 rounded-lg bg-cyberCard border border-cyberBorder text-slate-300 hover:text-neonCyan transition-all">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="p-1.5 rounded bg-gradient-to-br from-neonCyan to-neonPurple text-cyberDark font-black tracking-wider text-xs shadow-[0_0_10px_rgba(0,240,255,0.3)]">DJI</div>
+                    <span class="font-bold text-md tracking-tight text-white font-mono">NEXUS</span>
                 </div>
-            </li>
-        </ul>
-    </div>
-    <div id="menu-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity"></div>
-
-    <!-- Login/Signup Popup Modal (Hidden by default) -->
-    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-zinc-800 p-6 rounded-xl text-center max-w-sm w-full shadow-[0_0_30px_rgba(230,31,43,0.15)]">
-            <div class="w-3 h-3 bg-[#E61F2B] rounded-full mx-auto mb-4 animate-pulse"></div>
-            <h3 class="text-white font-black tracking-widest text-lg mb-2">ACCESS RESTRICTED</h3>
-            <p class="text-zinc-400 text-sm mb-6">You must initialize a pilot profile to deploy posts and share intel.</p>
-            <div class="flex gap-3">
-                <a href="login.html" class="flex-1 bg-zinc-900 border border-zinc-800 hover:border-cyan-500 hover:text-cyan-400 text-white font-bold py-3 rounded-lg transition-all text-xs uppercase tracking-widest">Login</a>
-                <a href="register.html" class="flex-1 bg-[#E61F2B] hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(230,31,43,0.3)]">Register</a>
             </div>
-            <button id="close-modal-btn" class="mt-6 text-xs text-zinc-600 hover:text-white uppercase tracking-wider font-bold">Cancel</button>
-        </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow w-full max-w-3xl mx-auto px-4 py-8 relative z-10">
-        
-        <!-- Post Creation Box (Always visible now) -->
-        <div class="bg-zinc-950 border border-zinc-800 p-4 rounded-xl mb-8 transition-colors hover:border-zinc-700">
-            <textarea id="post-content" placeholder="Share hardware fixes, firmware logs, or intel..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-cyan-500 outline-none text-white mb-3 h-20 resize-none transition-colors"></textarea>
-            
-            <div class="mb-3 flex items-center gap-2 bg-black border border-zinc-800 p-2 rounded-lg">
-                <label for="post-image" class="cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs px-3 py-1.5 rounded transition-colors border border-zinc-700 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Attach Image
-                </label>
-                <input type="file" id="post-image" accept="image/*" class="hidden">
-                <span id="file-name" class="text-xs text-zinc-500 truncate max-w-[200px]">No file selected</span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="post-tag" placeholder="#Tag (e.g. #hardware)" class="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm w-full sm:w-1/3 outline-none text-cyan-400 focus:border-cyan-500">
-                <button id="submit-post" class="bg-[#E61F2B] hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg text-sm w-full sm:w-2/3 uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(230,31,43,0.3)]">Deploy Post</button>
+            <div id="auth-zone" class="font-mono text-xs">
+                <div class="h-4 w-4 animate-spin rounded-full border-2 border-neonCyan border-t-transparent"></div>
             </div>
         </div>
+    </header>
 
-        <!-- The Feed -->
-        <div id="feed-container" class="space-y-4">
-            <!-- Posts inject here instantly -->
-        </div>
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <aside class="lg:col-span-1 space-y-4">
+            <button onclick="handleNewThreadProtected()" class="w-full py-3 px-4 rounded-xl font-bold bg-gradient-to-r from-neonCyan to-neonPurple text-cyberDark shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all flex items-center justify-center gap-2">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Create New Thread
+            </button>
+            <div class="bg-cyberCard border border-cyberBorder rounded-xl p-4">
+                <h3 class="text-xs font-bold tracking-widest text-slate-400 uppercase mb-3 flex items-center gap-2 font-mono">
+                    <i data-lucide="cpu" class="w-4 h-4 text-neonCyan"></i> Filter Stream
+                </h3>
+                <nav class="space-y-1 text-sm font-medium">
+                    <button onclick="filterCategory('All')" class="w-full flex items-center justify-between p-2.5 rounded-lg text-neonCyan bg-cyberBorder/40">All Matrices</button>
+                    <button onclick="filterCategory('Mavic / Air')" class="w-full text-left p-2.5 rounded-lg text-slate-400 hover:bg-cyberBorder hover:text-white transition-colors">Mavic & Air Series</button>
+                    <button onclick="filterCategory('Neo / Avata')" class="w-full text-left p-2.5 rounded-lg text-slate-400 hover:bg-cyberBorder hover:text-white transition-colors">Neo & FPV Avata</button>
+                    <button onclick="filterCategory('Firmware & Mods')" class="w-full text-left p-2.5 rounded-lg text-slate-400 hover:bg-cyberBorder hover:text-white transition-colors">Firmware & Tweaks</button>
+                </nav>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-3 space-y-4">
+            <div id="view-feed" class="space-y-4">
+                <div class="flex items-center justify-between border-b border-cyberBorder pb-2">
+                    <h2 id="feed-title" class="text-lg font-bold text-white font-mono">Recent Telemetry Packet</h2>
+                </div>
+                <div id="threads-container" class="space-y-3"></div>
+            </div>
+
+            <div id="view-detail" class="hidden space-y-4">
+                <button onclick="exitThreadDetail()" class="text-xs font-mono text-slate-400 hover:text-neonCyan flex items-center gap-1 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Clear Current Node View
+                </button>
+                <div id="active-thread-root"></div>
+                
+                <div class="bg-cyberCard border border-cyberBorder rounded-xl p-6 space-y-4">
+                    <h3 class="text-sm font-bold text-white font-mono flex items-center gap-2">
+                        <i data-lucide="message-square" class="text-neonPurple w-4 h-4"></i> Data Responses
+                    </h3>
+                    <div id="comments-container" class="space-y-3 border-l border-cyberBorder pl-4"></div>
+                    <form id="comment-form" class="pt-3 border-t border-cyberBorder/60 space-y-2">
+                        <textarea id="comment-content" rows="3" required placeholder="Inject helpful critique or technical solution data..." class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-3 text-sm focus:outline-none focus:border-neonPurple text-white resize-none"></textarea>
+                        <button type="submit" class="px-4 py-2 text-xs font-mono rounded bg-neonPurple text-white font-bold transition-all hover:bg-opacity-90">Transmit Reply</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view-create" class="hidden bg-cyberCard border border-cyberBorder rounded-xl p-6 space-y-4">
+                <h2 class="text-xl font-bold text-white font-mono">Initialize New Forum Node</h2>
+                <form id="thread-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Target Category Matrix</label>
+                        <select id="thread-category" class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-neonCyan">
+                            <option value="Mavic / Air">Mavic / Air Series</option>
+                            <option value="Neo / Avata">Neo & FPV Avata</option>
+                            <option value="Firmware & Mods">Firmware & Tweaks</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Payload Title</label>
+                        <input type="text" id="thread-title" required class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-neonCyan">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Documentation Content</label>
+                        <textarea id="thread-content" rows="6" required class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-neonCyan resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="px-5 py-2 rounded bg-neonCyan text-cyberDark font-bold font-mono text-xs tracking-wider">Deploy Stream</button>
+                </form>
+            </div>
+        </section>
     </main>
 
-    <!-- Logic Engine -->
+    <div id="sidebar-drawer" class="fixed inset-0 z-50 hidden bg-cyberDark/80 backdrop-blur-xs flex justify-start">
+        <div class="w-80 h-full bg-cyberCard border-r border-cyberBorder p-6 flex flex-col justify-between shadow-[0_0_40px_rgba(0,0,0,0.7)]">
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-mono tracking-widest text-slate-400">IDENTITY HUB</span>
+                    <button onclick="toggleDrawer(false)" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                
+                <div id="drawer-user-info" class="p-3.5 bg-cyberDark/50 border border-cyberBorder rounded-xl space-y-1">
+                    <p class="text-xs text-slate-500 font-mono">System Offline</p>
+                    <button onclick="window.location.href='login.html'" class="text-xs text-neonCyan font-bold underline">Link Account Profile</button>
+                </div>
+
+                <hr class="border-cyberBorder">
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-mono font-bold text-neonPurple tracking-wider uppercase">Terminal Infrastructure</h4>
+                    <div class="p-4 bg-cyberDark/40 border border-cyberBorder rounded-xl space-y-2 text-xs leading-relaxed text-slate-400 font-sans">
+                        <p>This premium system architecture and secure database routing matrix was conceptualized, designed, and deployed engineered by <strong class="text-white">exploit technology</strong>.</p>
+                        <p class="pt-1 text-[11px] border-t border-cyberBorder/50 font-mono text-slate-500">Core Engine Attribution:<br><span class="text-neonCyan">XNEON Technologies</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-[10px] font-mono text-slate-600">V2.0.26 // CRYPTO SECURE PLATFORM</div>
+        </div>
+    </div>
+
     <script type="module">
-        import { db, auth, storage } from './js/firebase.js';
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, doc, getDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Bulletproof Sidebar Menu Logic
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('menu-overlay');
-        
-        document.getElementById('menu-btn').addEventListener('click', () => {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        });
-        
-        overlay.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        });
+        const firebaseConfig = {
+            apiKey: "AIzaSyB7-pk30LeE0TICao-rfn-LBvaWXpEr3eA",
+            authDomain: "dji-community-unofficial-dd90e.firebaseapp.com",
+            projectId: "dji-community-unofficial-dd90e",
+            storageBucket: "dji-community-unofficial-dd90e.firebasestorage.app",
+            messagingSenderId: "1361004119",
+            appId: "1:1361004119:web:ec247e69da587bbd168512"
+        };
 
-        // Modal Logic for Unregistered Users
-        const authModal = document.getElementById('auth-modal');
-        document.getElementById('close-modal-btn').addEventListener('click', () => {
-            authModal.classList.add('hidden');
-        });
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Image Selection Display
-        let selectedFile = null;
-        document.getElementById('post-image').addEventListener('change', function(e) {
-            if (e.target.files.length > 0) {
-                selectedFile = e.target.files[0];
-                document.getElementById('file-name').innerText = selectedFile.name;
-            } else {
-                selectedFile = null;
-                document.getElementById('file-name').innerText = "No file selected";
-            }
-        });
-
-        // Check Auth Status (Updates UI only)
         let currentUser = null;
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                const authBtn = document.getElementById('auth-btn');
-                authBtn.innerText = "Logout";
-                authBtn.classList.replace('bg-zinc-900', 'bg-red-900/50');
-                authBtn.classList.replace('border-zinc-800', 'border-red-900');
-                authBtn.classList.replace('hover:bg-zinc-800', 'hover:bg-red-900');
-                authBtn.href = "#";
-                authBtn.addEventListener('click', () => { signOut(auth); window.location.reload(); });
+        let activeCategory = 'All';
+        let openThreadId = null;
+        let threadUnsub = null;
+        let commentUnsub = null;
+
+        // Drawer Operations
+        window.toggleDrawer = (state) => {
+            const drawer = document.getElementById('sidebar-drawer');
+            if (state) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        };
+
+        window.handleNewThreadProtected = () => {
+            if(!currentUser) window.location.href = 'login.html';
+            else {
+                document.getElementById('view-feed').classList.add('hidden');
+                document.getElementById('view-detail').classList.add('hidden');
+                document.getElementById('view-create').classList.remove('hidden');
             }
+        };
+
+        window.exitThreadDetail = () => {
+            // strip window url parameters cleanly
+            window.history.pushState({}, document.title, window.location.pathname);
+            document.getElementById('view-detail').classList.add('hidden');
+            document.getElementById('view-create').classList.add('hidden');
+            document.getElementById('view-feed').classList.remove('hidden');
+            openThreadId = null;
+        };
+
+        // Deep Copy System URLs
+        window.copyThreadLink = (id) => {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?threadId=${id}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("Thread URL packet successfully secured to local clipboard cache!");
+            }).catch(() => {
+                alert("Share link target: " + shareUrl);
+            });
+        };
+
+        // Observe Identity Cache Bounds
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const authZone = document.getElementById('auth-zone');
+            const infoBox = document.getElementById('drawer-user-info');
+
+            if(user) {
+                authZone.innerHTML = `<button onclick="window.location.href='profile.html'" class="text-neonCyan border border-neonCyan/20 px-3 py-1.5 rounded bg-cyberCard font-mono hover:bg-neonCyan/10 transition-all">TERMINAL PROFILE</button>`;
+                infoBox.innerHTML = `
+                    <div onclick="window.location.href='profile.html'" class="cursor-pointer group">
+                        <p class="text-sm font-bold text-white group-hover:text-neonCyan transition-colors">${user.displayName || 'Anonymous Pilot'}</p>
+                        <p class="text-xs text-slate-400 font-mono overflow-hidden text-ellipsis">[${user.email}]</p>
+                        <span class="text-[10px] text-neonPurple font-mono block pt-1">⚙️ Click to edit profile payload</span>
+                    </div>
+                    <button id="logout-btn" class="mt-3 w-full text-left text-xs font-mono text-red-400 border border-red-500/10 p-1.5 rounded bg-red-950/20 hover:bg-red-900/40">Logoff Identity</button>
+                `;
+                document.getElementById('logout-btn').onclick = () => signOut(auth);
+            } else {
+                authZone.innerHTML = `<button onclick="window.location.href='login.html'" class="text-slate-400 hover:text-white">ACCESS PORTAL</button>`;
+                infoBox.innerHTML = `
+                    <p class="text-xs text-slate-500 font-mono">System Encrypted</p>
+                    <button onclick="window.location.href='login.html'" class="text-xs text-neonCyan font-bold underline">Link Pilot Authorization Token</button>
+                `;
+            }
+            lucide.createIcons();
+            checkDeepLinkUrl();
         });
 
-        // Submit Post Button (Triggers Popup if not logged in)
-        document.getElementById('submit-post').addEventListener('click', async () => {
-            if (!currentUser) {
-                authModal.classList.remove('hidden'); // Show popup if guest
-                return;
+        function checkDeepLinkUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const threadIdParam = params.get('threadId');
+            if(threadIdParam && threadIdParam !== openThreadId) {
+                window.openThread(threadIdParam);
+            }
+        }
+
+        window.filterCategory = (category) => {
+            activeCategory = category;
+            document.getElementById('feed-title').innerText = `${category.toUpperCase()} MATRIX PACKETS`;
+            syncThreads();
+        };
+
+        function syncThreads() {
+            if(threadUnsub) threadUnsub();
+            const ref = collection(db, "threads");
+            let q = query(ref, orderBy("createdAt", "desc"), limit(30));
+            if(activeCategory !== 'All') {
+                q = query(ref, where("category", "==", activeCategory), orderBy("createdAt", "desc"), limit(30));
             }
 
-            const content = document.getElementById('post-content').value;
-            let tag = document.getElementById('post-tag').value || '#general';
-            const submitBtn = document.getElementById('submit-post');
+            threadUnsub = onSnapshot(q, (snap) => {
+                const c = document.getElementById('threads-container');
+                c.innerHTML = '';
+                if(snap.empty) {
+                    c.innerHTML = `<div class="p-8 border border-dashed border-cyberBorder text-center rounded-xl text-slate-500 text-sm font-mono">Empty stream node configuration.</div>`;
+                    return;
+                }
+                snap.forEach((doc) => {
+                    const data = doc.data();
+                    const d = document.createElement('div');
+                    d.className = "bg-cyberCard border border-cyberBorder rounded-xl p-4 flex flex-col justify-between gap-3 cyber-glow relative";
+                    d.innerHTML = `
+                        <div onclick="window.openThread('${doc.id}')" class="cursor-pointer space-y-1">
+                            <div class="text-[11px] font-mono flex items-center gap-2 text-slate-400">
+                                <span class="text-neonPurple">${data.category}</span>
+                                <span>• By ${data.author}</span>
+                            </div>
+                            <h3 class="text-base font-bold text-white tracking-tight">${data.title}</h3>
+                            <p class="text-slate-400 text-sm line-clamp-2">${data.content}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-cyberBorder/40">
+                            <span class="text-[10px] font-mono text-slate-500">ID: ${doc.id.substring(0,8)}</span>
+                            <button onclick="event.stopPropagation(); window.copyThreadLink('${doc.id}')" class="text-xs font-mono text-neonCyan hover:underline flex items-center gap-1">
+                                <i data-lucide="share-2" class="w-3 h-3"></i> Share Node Link
+                            </button>
+                        </div>
+                    `;
+                    c.appendChild(d);
+                });
+                lucide.createIcons();
+            });
+        }
 
-            if (content.trim() === "" && !selectedFile) return alert("Please add text or an image.");
+        window.openThread = async (id) => {
+            openThreadId = id;
+            // update navigation state configuration variables
+            const targetUrl = `${window.location.origin}${window.location.pathname}?threadId=${id}`;
+            window.history.pushState({ path: targetUrl }, '', targetUrl);
 
-            submitBtn.innerText = "Uploading...";
-            submitBtn.disabled = true;
+            document.getElementById('view-feed').classList.add('hidden');
+            document.getElementById('view-create').classList.add('hidden');
+            document.getElementById('view-detail').classList.remove('hidden');
 
-            let imageUrl = null;
+            const root = document.getElementById('active-thread-root');
+            root.innerHTML = `<div class="h-10 w-10 animate-spin border-2 border-neonCyan border-t-transparent rounded-full mx-auto"></div>`;
 
             try {
-                if (selectedFile) {
-                    const storageRef = ref(storage, `post_images/${Date.now()}_${selectedFile.name}`);
-                    await uploadBytes(storageRef, selectedFile);
-                    imageUrl = await getDownloadURL(storageRef);
+                const docSnap = await getDoc(doc(db, "threads", id));
+                if(!docSnap.exists()){
+                    root.innerHTML = `<div class="p-4 bg-red-950/20 text-red-400 rounded-xl border border-red-900/30 font-mono text-xs">Error: Target thread stream has timed out or changed index positions.</div>`;
+                    return;
                 }
-
-                await addDoc(collection(db, "posts"), {
-                    text: content,
-                    imageUrl: imageUrl, 
-                    tag: tag.startsWith('#') ? tag : `#${tag}`,
-                    author: currentUser.email.split('@')[0],
-                    createdAt: serverTimestamp()
-                });
-
-                document.getElementById('post-content').value = "";
-                document.getElementById('post-tag').value = "";
-                document.getElementById('post-image').value = "";
-                document.getElementById('file-name').innerText = "No file selected";
-                selectedFile = null;
-
-            } catch (error) {
-                console.error("Error posting: ", error);
-                alert("Failed to upload. Check console.");
-            } finally {
-                submitBtn.innerText = "Deploy Post";
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Load Feed IMMEDIATELY for everyone (No login required)
-        const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const feed = document.getElementById('feed-container');
-            feed.innerHTML = ""; 
-            
-            snapshot.forEach((docSnap) => {
-                const post = docSnap.data();
-                
-                const imageHtml = post.imageUrl 
-                    ? `<img src="${post.imageUrl}" alt="Pilot Upload" class="w-full h-auto mt-3 rounded-lg border border-zinc-800 object-cover max-h-96">` 
-                    : '';
-
-                feed.innerHTML += `
-                    <div class="bg-zinc-950 border border-zinc-800 p-5 rounded-xl transition-all hover:border-zinc-700">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="text-xs font-bold text-zinc-400">@${post.author}</span>
-                            <span class="text-[10px] font-black text-cyan-400 bg-cyan-900/20 border border-cyan-900/50 px-2 py-1 rounded tracking-wider uppercase">${post.tag}</span>
+                const data = docSnap.data();
+                root.innerHTML = `
+                    <div class="bg-cyberCard border border-cyberBorder rounded-xl p-5 space-y-3">
+                        <div class="text-xs font-mono text-slate-400 flex justify-between items-center">
+                            <span>MATRIX PATH // ${data.category}</span>
+                            <button onclick="window.copyThreadLink('${id}')" class="text-neonCyan border border-neonCyan/20 px-2 py-1 bg-cyberDark rounded flex items-center gap-1 hover:bg-neonCyan/10"><i data-lucide="share-2" class="w-3 h-3"></i> Copy Shareable Link</button>
                         </div>
-                        <p class="text-sm text-zinc-200 leading-relaxed">${post.text}</p>
-                        ${imageHtml}
+                        <h1 class="text-xl font-bold text-white">${data.title}</h1>
+                        <p class="text-slate-300 text-sm whitespace-pre-wrap bg-cyberDark/60 border border-cyberBorder/50 p-4 rounded-lg font-sans">${data.content}</p>
+                        <div class="text-[10px] font-mono text-slate-500">INITIATING DISPATCH OPERATOR: ${data.author}</div>
                     </div>
                 `;
+                lucide.createIcons();
+                syncComments(id);
+            } catch(e) {
+                root.innerHTML = `<div class="text-red-400 text-xs font-mono">Fault detected: ${e.message}</div>`;
+            }
+        };
+
+        function syncComments(threadId) {
+            if(commentUnsub) commentUnsub();
+            commentUnsub = onSnapshot(query(collection(db, "comments"), where("threadId", "==", threadId), orderBy("createdAt", "asc")), (snap) => {
+                const c = document.getElementById('comments-container');
+                c.innerHTML = '';
+                if(snap.empty) {
+                    c.innerHTML = `<p class="text-xs text-slate-500 italic font-mono">No communication packets received on this sequence.</p>`;
+                    return;
+                }
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    const d = document.createElement('div');
+                    d.className = "bg-cyberDark/60 border border-cyberBorder/50 p-3 rounded-lg space-y-1";
+                    d.innerHTML = `
+                        <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-neonCyan font-bold">${data.author}</span>
+                        </div>
+                        <p class="text-slate-300 text-xs font-sans">${data.content}</p>
+                    `;
+                    c.appendChild(d);
+                });
             });
-            if (feed.innerHTML === "") feed.innerHTML = '<div class="text-center text-zinc-600 text-sm py-10">No logs found. Initialize the first transmission.</div>';
+        }
+
+        document.getElementById('comment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!currentUser) { window.location.href = 'login.html'; return; }
+            const input = document.getElementById('comment-content');
+            const val = input.value.trim();
+            try {
+                await addDoc(collection(db, "comments"), {
+                    threadId: openThreadId,
+                    content: val,
+                    author: currentUser.displayName || 'Anonymous Pilot',
+                    uid: currentUser.uid,
+                    createdAt: new Date()
+                });
+                input.value = '';
+            } catch(err) { alert(err.message); }
         });
+
+        document.getElementById('thread-form').addEventListener('submit', async(e) => {
+            e.preventDefault();
+            if(!currentUser) return;
+            try {
+                await addDoc(collection(db, "threads"), {
+                    title: document.getElementById('thread-title').value.trim(),
+                    content: document.getElementById('thread-content').value.trim(),
+                    category: document.getElementById('thread-category').value,
+                    author: currentUser.displayName || 'Anonymous Pilot',
+                    uid: currentUser.uid,
+                    createdAt: new Date()
+                });
+                e.target.reset();
+                exitThreadDetail();
+                syncThreads();
+            } catch(err) { alert(err.message); }
+        });
+
+        syncThreads();
     </script>
 </body>
 </html>

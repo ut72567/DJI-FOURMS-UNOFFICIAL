@@ -1,0 +1,76 @@
+/* =========================================
+   GLOBAL SYSTEM STYLES & TAILWIND AUGMENTS
+   ========================================= */
+
+:root {
+    /* Map your Tailwind config colors to CSS variables for pure CSS usage */
+    --color-cyber-dark: #0b0f19;
+    --color-cyber-card: #151d30;
+    --color-cyber-border: #222f4c;
+    --color-neon-cyan: #00f0ff;
+    --color-neon-purple: #bf5af2;
+}
+
+/* --- Base Resets & Document Setup --- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-cyber-dark);
+    color: #e2e8f0;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden; 
+}
+
+/* --- Text Selection Styling --- */
+::selection {
+    background-color: var(--color-neon-purple);
+    color: #ffffff;
+}
+
+::-moz-selection {
+    background-color: var(--color-neon-purple);
+    color: #ffffff;
+}
+
+/* --- Custom Cyberpunk Scrollbar --- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-cyber-dark);
+    border-left: 1px solid var(--color-cyber-border);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-cyber-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neon-cyan);
+    box-shadow: 0 0 10px var(--color-neon-cyan);
+}
+
+/* --- Custom Component Classes --- */
+.cyber-glow {
+    transition: all 0.3s ease-in-out;
+}
+
+.cyber-glow:hover {
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    border-color: var(--color-neon-cyan);
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Hide scrollbar for clean UI in specific containers (like sidebars) but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
