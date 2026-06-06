@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 selection:bg-[#E61F2B] selection:text-white">
+
+    <div class="w-full max-w-sm p-8 border border-zinc-800 bg-zinc-950 rounded-2xl glow-cyan relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-cyan-600/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        
+        <div class="text-center mb-8 relative z-10">
+            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse mx-auto mb-3 shadow-[0_0_8px_#00FFFF]"></div>
+            <h2 class="text-2xl font-black text-white tracking-widest">SYSTEM LOGIN</h2>
+        </div>
+        
+        <form id="login-form" class="space-y-4 relative z-10">
+            <input type="email" id="email" placeholder="Email Address" required class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-3 text-sm focus:border-cyan-500 outline-none text-white transition-colors">
+            <input type="password" id="password" placeholder="Password" required class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-3 text-sm focus:border-cyan-500 outline-none text-white transition-colors">
+            
+            <button type="submit" id="login-btn" class="w-full mt-2 bg-transparent border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-black font-bold py-3 rounded-lg text-sm uppercase tracking-wider transition-all">
+                Establish Connection
+            </button>
+        </form>
+        <p id="error-msg" class="text-[#E61F2B] text-xs font-bold text-center mt-4 hidden"></p>
+        
+        <div class="mt-6 text-center relative z-10">
+            <a href="register.html" class="text-xs text-zinc-500 hover:text-white transition-colors">Create New Profile</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loginPilot } from './js/auth.js';
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            btn.innerText = "Verifying...";
+            
+            try {
+                await loginPilot(
+                    document.getElementById('email').value,
+                    document.getElementById('password').value
+                );
+            } catch (error) {
+                document.getElementById('error-msg').innerText = "Access Denied: Invalid Credentials";
+                document.getElementById('error-msg').classList.remove('hidden');
+                btn.innerText = "Establish Connection";
+            }
+        });
+    </script>
+</body>
+</html>
