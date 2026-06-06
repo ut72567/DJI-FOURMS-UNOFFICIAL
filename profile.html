@@ -3,69 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Terminal Control Panel</title>
+    <title>Profile Settings | DJI Nexus Community</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { cyberDark: '#0b0f19', cyberCard: '#151d30', cyberBorder: '#222f4c', neonCyan: '#00f0ff', neonPurple: '#bf5af2' }
+                    colors: {
+                        uiBg: '#0f172a',      // slate-900
+                        uiCard: '#1e293b',    // slate-800
+                        uiBorder: '#334155',  // slate-700
+                        uiAccent: '#3b82f6',  // blue-500
+                        uiHover: '#2563eb',   // blue-600
+                        uiText: '#f1f5f9',    // slate-100
+                        uiMuted: '#94a3b8'    // slate-400
+                    }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="global.css">
 </head>
-<body class="bg-cyberDark min-h-screen text-slate-200 antialiased p-4 sm:p-6">
+<body class="min-h-screen flex flex-col antialiased relative overflow-x-hidden bg-uiBg text-uiText font-sans">
 
-    <div class="max-w-xl mx-auto space-y-6">
-        <button onclick="window.location.href='index.html'" class="text-xs font-mono text-slate-400 hover:text-neonCyan">
-            &larr; Retract To Terminal Index
-        </button>
+    <header class="sticky top-0 z-40 w-full border-b border-uiBorder bg-uiBg/95 backdrop-blur-sm">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="p-1.5 rounded bg-uiAccent text-white font-black tracking-wider text-xs">DJI</div>
+                <span class="font-bold text-md tracking-tight text-white">NEXUS</span>
+            </div>
+            <button onclick="window.location.href='index.html'" class="text-sm font-medium text-uiMuted hover:text-white flex items-center gap-2 transition-colors">
+                <i data-lucide="home" class="w-4 h-4"></i> Return to Hub
+            </button>
+        </div>
+    </header>
 
-        <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 space-y-4 shadow-xl">
-            <h2 class="text-base font-bold font-mono text-white tracking-wide border-b border-cyberBorder pb-2">MUTATE INTERACTIVE PROFILE DATA</h2>
-            <form id="username-form" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-mono text-slate-400 mb-1">REGISTERED EMAIL CONTEXT (UNALTERABLE)</label>
-                    <input type="text" id="prof-email" disabled class="w-full bg-cyberDark/40 border border-cyberBorder/60 rounded-lg p-2.5 text-sm text-slate-500 font-mono cursor-not-allowed">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono text-slate-400 mb-1">ALTER USERNAME ATTR HANDLE</label>
-                    <input type="text" id="prof-name" required class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-neonCyan">
-                </div>
-                <button type="submit" class="px-4 py-2 text-xs font-mono rounded bg-neonCyan text-cyberDark font-bold">COMMIT ACCOUNT NAME CHANGE</button>
-            </form>
+    <main class="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6">
+        
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-white">Account Settings</h1>
+            <button id="logout-btn" class="px-4 py-2 text-sm font-medium text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-lg transition-colors border border-red-500/20">Sign Out</button>
         </div>
 
-        <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 space-y-4 shadow-xl">
-            <h2 class="text-base font-bold font-mono text-neonPurple tracking-wide border-b border-cyberBorder pb-2">RE-ENGINEER PROTECTION PASS KEY</h2>
+        <div class="bg-uiCard border border-uiBorder rounded-xl p-6 shadow-sm space-y-8">
             
-            <form id="pass-request-form" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-mono text-slate-400 mb-1">SPECIFY TARGET NEW PASS KEY</label>
-                    <input type="password" id="new-pass" required minlength="6" placeholder="••••••••" class="w-full bg-cyberDark border border-cyberBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-neonPurple">
+            <div class="flex items-center gap-5 pb-6 border-b border-uiBorder">
+                <div id="avatar-circle" class="w-16 h-16 rounded-full bg-uiBorder flex items-center justify-center text-xl font-bold text-white shadow-inner">
+                    ?
                 </div>
-                <button type="submit" class="px-4 py-2 text-xs font-mono rounded bg-neonPurple text-white font-bold">REQUEST PASS CHANGE CHALLENGE PACKET</button>
-            </form>
+                <div>
+                    <h2 id="display-name-text" class="text-lg font-semibold text-white">Loading User...</h2>
+                    <p id="display-email-text" class="text-sm text-uiMuted">Retrieving credentials</p>
+                </div>
+            </div>
 
-            <form id="pass-verify-form" class="hidden space-y-3 pt-4 border-t border-cyberBorder">
-                <div class="p-3 bg-cyberDark text-xs font-mono border border-neonCyan/20 text-neonCyan rounded">
-                    Verification payload routed successfully. Check active communication inbox for verification code.
-                </div>
+            <form id="profile-form" class="space-y-5">
                 <div>
-                    <label class="block text-xs font-mono text-slate-400 mb-1">PASS KEY VERIFICATION INTERCEPT OTP</label>
-                    <input type="text" id="pass-otp" required maxlength="6" class="w-full text-center bg-cyberDark border border-neonCyan rounded-lg p-2 text-white font-mono tracking-widest text-lg">
+                    <label class="block text-sm font-medium text-uiMuted mb-1.5">Registered Email (Read-Only)</label>
+                    <input type="email" id="user-email" disabled class="w-full bg-uiBg/50 border border-uiBorder rounded-lg p-2.5 text-sm text-uiMuted cursor-not-allowed">
+                    <p class="text-xs text-uiMuted mt-1.5 flex items-center gap-1">
+                        <i data-lucide="lock" class="w-3 h-3"></i> Email changes require administrator verification.
+                    </p>
                 </div>
-                <button type="submit" class="w-full py-2 text-xs font-mono rounded bg-neonCyan text-cyberDark font-bold">RE-WRITE ACCESS TOKEN PASS KEY</button>
+                
+                <div>
+                    <label class="block text-sm font-medium text-uiMuted mb-1.5">Community Display Name</label>
+                    <input type="text" id="user-name" required placeholder="Enter your pilot alias..." class="w-full bg-uiBg border border-uiBorder rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-uiAccent focus:ring-1 focus:ring-uiAccent transition-all">
+                </div>
+
+                <div id="status-message" class="text-sm hidden pt-1 font-medium"></div>
+
+                <div class="pt-4 border-t border-uiBorder flex justify-end">
+                    <button type="submit" id="update-btn" class="px-6 py-2.5 rounded-lg bg-uiAccent hover:bg-uiHover text-white font-medium text-sm transition-colors shadow-sm flex items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> Save Changes
+                    </button>
+                </div>
             </form>
         </div>
-    </div>
+        
+        <div class="text-center text-xs text-uiMuted font-medium pt-4">
+            System ID: <span id="system-uid" class="font-mono bg-uiBorder/40 px-1.5 py-0.5 rounded text-uiText">----------</span>
+        </div>
+
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB7-pk30LeE0TICao-rfn-LBvaWXpEr3eA",
@@ -78,69 +103,77 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        emailjs.init({ publicKey: "dR7szNsRur2vopJXq" });
+        
+        lucide.createIcons();
 
-        let activeUser = null;
-        let generatedSecurityOtp = null;
-        let proposedPasswordCache = "";
-
+        // Check authentication state
         onAuthStateChanged(auth, (user) => {
-            if(!user) { window.location.href = 'login.html'; return; }
-            activeUser = user;
-            document.getElementById('prof-email').value = user.email;
-            document.getElementById('prof-name').value = user.displayName || '';
-        });
+            if (user) {
+                // Populate Profile Data
+                const displayName = user.displayName || 'Unnamed Pilot';
+                
+                document.getElementById('display-name-text').textContent = displayName;
+                document.getElementById('display-email-text').textContent = user.email;
+                document.getElementById('avatar-circle').textContent = displayName.charAt(0).toUpperCase();
+                
+                document.getElementById('user-email').value = user.email;
+                document.getElementById('user-name').value = user.displayName || '';
+                document.getElementById('system-uid').textContent = user.uid;
 
-        // Mutate Active Handle Name Configuration Array
-        document.getElementById('username-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const chosenName = document.getElementById('prof-name').value.trim();
-            try {
-                await updateProfile(activeUser, { displayName: chosenName });
-                alert("Pilot network moniker identity updated successfully across internal platform arrays.");
-            } catch(err) { alert(err.message); }
-        });
-
-        // Trigger EmailJS Authentication Token For Password Sequence
-        document.getElementById('pass-request-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            proposedPasswordCache = document.getElementById('new-pass').value;
-            
-            generatedSecurityOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log("Security Diagnostics Profile Lock Verification Match: ", generatedSecurityOtp);
-
-            const challengeParams = {
-                to_email: activeUser.email,
-                user_name: activeUser.displayName || 'System Pilot',
-                otp_code: generatedSecurityOtp,
-                message: `A security configuration change profile challenge request was initialized. Your security confirmation key sequence is: ${generatedSecurityOtp}`
-            };
-
-            emailjs.send("service_l5yz804", "template_2zn11sn", challengeParams)
-                .then(() => {
-                    alert("Verification authorization loop packet transmitted.");
-                    document.getElementById('pass-request-form').querySelectorAll('input, button').forEach(el => el.disabled = true);
-                    document.getElementById('pass-verify-form').classList.remove('hidden');
-                })
-                .catch(err => alert("Verification dispatch array error: " + JSON.stringify(err)));
-        });
-
-        // Commit Password Change via Final Authorization Check
-        document.getElementById('pass-verify-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const verificationValue = document.getElementById('pass-otp').value.trim();
-
-            if(verificationValue !== generatedSecurityOtp) {
-                alert("Cryptographic mismatch fault. Configuration sequence rejected.");
-                return;
+            } else {
+                // Kick unauthorized users back to login
+                window.location.href = 'login.html';
             }
+        });
+
+        // Handle Profile Updates
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newName = document.getElementById('user-name').value.trim();
+            const btn = document.getElementById('update-btn');
+            const statusBox = document.getElementById('status-message');
+
+            if (!auth.currentUser) return;
+
+            // UI Loading State
+            btn.disabled = true;
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Saving...`;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            statusBox.classList.add('hidden');
 
             try {
-                await updatePassword(activeUser, proposedPasswordCache);
-                alert("Security credentials re-written successfully. Target sequence updated.");
-                window.location.href = 'index.html';
-            } catch(err) {
-                alert(`Security system exception thrown: ${err.message}. (Note: If this transaction faults out, terminate session logs and re-authenticate before executing security changes).`);
+                await updateProfile(auth.currentUser, {
+                    displayName: newName
+                });
+                
+                // Update UI visually
+                document.getElementById('display-name-text').textContent = newName;
+                document.getElementById('avatar-circle').textContent = newName.charAt(0).toUpperCase();
+                
+                // Show Success Message
+                statusBox.textContent = '✓ Profile updated successfully.';
+                statusBox.className = 'text-sm font-medium text-green-400 block pt-1';
+                
+            } catch (error) {
+                // Show Error Message
+                statusBox.textContent = `Error: ${error.message}`;
+                statusBox.className = 'text-sm font-medium text-red-400 block pt-1';
+            } finally {
+                // Restore Button State
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> Save Changes`;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                lucide.createIcons();
+            }
+        });
+
+        // Handle Sign Out
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // The onAuthStateChanged listener will automatically redirect to login.html
+            } catch (error) {
+                alert("Failed to sign out: " + error.message);
             }
         });
     </script>
