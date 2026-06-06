@@ -1,0 +1,16 @@
+body {
+    background-color: #050505;
+    color: #ffffff;
+    overflow-x: hidden;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Cyber-Premium Custom Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000000; }
+::-webkit-scrollbar-thumb { background: #E61F2B; border-radius: 10px; }
+
+/* Neon Glow Utilities */
+.glow-red { box-shadow: 0 0 20px rgba(230, 31, 43, 0.15); }
+.glow-cyan { box-shadow: 0 0 20px rgba(0, 255, 255, 0.1); }
+.glow-purple { box-shadow: 0 0 20px rgba(138, 43, 226, 0.15); }
