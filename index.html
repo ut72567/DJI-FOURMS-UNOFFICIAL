@@ -153,7 +153,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, doc, getDoc, limit } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // ADDED: getCountFromServer is now imported for the reply counter
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, doc, getDoc, limit, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB7-pk30LeE0TICao-rfn-LBvaWXpEr3eA",
@@ -173,6 +174,13 @@
         let openThreadId = null;
         let threadUnsub = null;
         let commentUnsub = null;
+
+        // HELPER FUNCTION: Format timestamps into readable dates
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = timestamp.toDate();
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
 
         const imgInput = document.getElementById('thread-image');
         const uploadStatus = document.getElementById('image-upload-status');
@@ -304,29 +312,51 @@
                     c.innerHTML = `<div class="p-8 border border-uiBorder border-dashed text-center rounded-xl text-uiMuted text-sm">No discussions found in this category.</div>`;
                     return;
                 }
-                snap.forEach((doc) => {
-                    const data = doc.data();
+                snap.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
                     const imgThumbnail = data.imageUrl ? `<img src="${data.imageUrl}" class="mt-3 h-40 w-full object-cover rounded-lg border border-uiBorder" alt="Thumbnail">` : '';
+                    const timeString = formatTime(data.createdAt);
                     
                     const d = document.createElement('div');
-                    d.className = "bg-uiCard border border-uiBorder rounded-xl p-5 hover:border-uiAccent transition-colors cursor-pointer shadow-sm";
+                    d.className = "bg-uiCard border border-uiBorder rounded-xl p-5 hover:border-uiAccent transition-colors cursor-pointer shadow-sm flex flex-col justify-between";
                     d.innerHTML = `
-                        <div onclick="window.openThread('${doc.id}')" class="space-y-2">
+                        <div onclick="window.openThread('${id}')" class="space-y-2">
                             <div class="text-xs font-medium flex items-center gap-2 text-uiMuted">
                                 <span class="bg-uiBorder/50 px-2 py-0.5 rounded text-uiText">${data.category}</span>
                                 <span>• Posted by ${data.author}</span>
+                                <span>• ${timeString}</span>
                             </div>
                             <h3 class="text-base font-semibold text-white leading-snug">${data.title}</h3>
                             <p class="text-uiMuted text-sm line-clamp-2">${data.content}</p>
                             ${imgThumbnail}
                         </div>
-                        <div class="flex items-center justify-end pt-3 mt-3 border-t border-uiBorder/50">
-                            <button onclick="event.stopPropagation(); window.copyThreadLink('${doc.id}')" class="text-xs font-medium text-uiMuted hover:text-uiAccent flex items-center gap-1.5 transition-colors">
+                        <div class="flex items-center justify-between pt-3 mt-3 border-t border-uiBorder/50">
+                            <button onclick="event.stopPropagation(); window.openThread('${id}')" id="reply-count-${id}" class="text-xs font-medium text-uiAccent hover:text-uiHover flex items-center gap-1.5 transition-colors">
+                                <i data-lucide="message-square" class="w-3.5 h-3.5"></i> <span class="count-text">Loading replies...</span>
+                            </button>
+                            
+                            <button onclick="event.stopPropagation(); window.copyThreadLink('${id}')" class="text-xs font-medium text-uiMuted hover:text-white flex items-center gap-1.5 transition-colors">
                                 <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share
                             </button>
                         </div>
                     `;
                     c.appendChild(d);
+
+                    // Fetch the total reply count for this thread
+                    getCountFromServer(query(collection(db, "comments"), where("threadId", "==", id))).then(countSnap => {
+                        const count = countSnap.data().count;
+                        const textNode = document.querySelector(`#reply-count-${id} .count-text`);
+                        if (textNode) {
+                            if (count === 0) {
+                                textNode.textContent = "Be the first to reply";
+                            } else if (count === 1) {
+                                textNode.textContent = "See 1 reply";
+                            } else {
+                                textNode.textContent = `See all ${count} replies`;
+                            }
+                        }
+                    }).catch(err => console.error("Error fetching count:", err));
                 });
                 lucide.createIcons();
             });
@@ -352,6 +382,7 @@
                 }
                 const data = docSnap.data();
                 const mainImage = data.imageUrl ? `<img src="${data.imageUrl}" class="w-full rounded-xl border border-uiBorder mt-5" alt="Attached Image">` : '';
+                const timeString = formatTime(data.createdAt);
                 
                 root.innerHTML = `
                     <div class="bg-uiCard border border-uiBorder rounded-xl p-6 shadow-sm">
@@ -362,9 +393,12 @@
                         <h1 class="text-xl font-bold text-white mb-3">${data.title}</h1>
                         <p class="text-uiText text-sm leading-relaxed whitespace-pre-wrap">${data.content}</p>
                         ${mainImage}
-                        <div class="mt-5 pt-4 border-t border-uiBorder flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-uiBorder flex items-center justify-center text-xs font-bold text-uiMuted">${data.author.charAt(0).toUpperCase()}</div>
-                            <div class="text-sm font-medium text-uiMuted">Posted by <span class="text-white">${data.author}</span></div>
+                        <div class="mt-5 pt-4 border-t border-uiBorder flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-uiBorder flex items-center justify-center text-xs font-bold text-uiMuted">${data.author.charAt(0).toUpperCase()}</div>
+                                <div class="text-sm font-medium text-uiMuted">Posted by <span class="text-white">${data.author}</span></div>
+                            </div>
+                            <div class="text-xs text-uiMuted">${timeString}</div>
                         </div>
                     </div>
                 `;
@@ -384,14 +418,19 @@
                     c.innerHTML = `<p class="text-sm text-uiMuted italic py-2">No replies yet. Be the first to respond.</p>`;
                     return;
                 }
-                snap.forEach(doc => {
-                    const data = doc.data();
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const timeString = formatTime(data.createdAt);
+                    
                     const d = document.createElement('div');
                     d.className = "bg-uiBg border border-uiBorder p-4 rounded-lg space-y-2";
                     d.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-uiBorder flex items-center justify-center text-[10px] font-bold text-uiMuted">${data.author.charAt(0).toUpperCase()}</div>
-                            <span class="text-sm font-medium text-white">${data.author}</span>
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-uiBorder flex items-center justify-center text-[10px] font-bold text-uiMuted">${data.author.charAt(0).toUpperCase()}</div>
+                                <span class="text-sm font-medium text-white">${data.author}</span>
+                            </div>
+                            <span class="text-[10px] text-uiMuted">${timeString}</span>
                         </div>
                         <p class="text-uiText text-sm pl-8">${data.content}</p>
                     `;
@@ -416,6 +455,15 @@
                     createdAt: new Date()
                 });
                 input.value = '';
+                
+                // NEW FEATURE: Auto-scroll to the bottom of the replies container smoothly
+                setTimeout(() => {
+                    const commentsContainer = document.getElementById('comments-container');
+                    if (commentsContainer.lastElementChild) {
+                        commentsContainer.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }
+                }, 150);
+                
             } catch(err) { alert(err.message); }
         });
 
